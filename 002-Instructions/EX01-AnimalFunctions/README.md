@@ -9,13 +9,11 @@ You can call these and test some cases using main.cpp I added.
 
 The first function goose() should return -4. If the assembly code is written correctly, it should be called and return the value onto the C++ main function.
 
-    goose PROC
     push ebp
     mov ebp, esp
     _______________
     pop ebp
     ret
-    goose ENDP
     
 This subroutine (function) follows callee rules.
 
@@ -34,7 +32,25 @@ OK, now it is the time to find an instruction for the blank. The function goose(
 
     move eax, -4   ; This is the answer for goose().
     
-If you filled the blank, let's test the output on this simple C++ program.
+If you filled the blank, let's test the output on this simple C++ program. Do not forget additional syntax to compile the assembly codes!
+
+Assembly file:
+
+	.386
+	.MODEL FLAT, C
+
+	.CODE
+
+	goose PROC
+		push ebp
+		mov ebp, esp
+		mov eax, -4
+		pop ebp
+		ret
+	goose ENDP
+	END
+
+C++ file:
 
     #include <iostream>
     using namespace std;
@@ -82,7 +98,7 @@ This seems to be quite easy if we apply what we have learned on the previous sub
 	
 The assembler codes is trying to say that this subroutine copies the first parameter to the eax, and does something while following the callee rules.
 
-Okay, we know the answer would multiply eax by three. However, the problem gives us to solve it with **lea**, not idiv. How about this answer?
+Okay, we know the answer would multiply eax by three. However, the problem gives us to solve it with **lea**, not mul. How about this answer?
 
 	lea eax, [eax*2 + eax]
 
