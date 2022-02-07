@@ -79,9 +79,9 @@ And this is our assembly codes. Try to see line 3 and line 4 mainly, since the o
 	
 What should we need to do if we want to pass some parameters to the subroutine? Push them onto the stack before the call. Since **the stack grows down**, the first parameter should be stored at the lowest address, and the addresses of next ones will be higher.
 
-The cell depicted in the stack are 32-bit wide memory locations. So to speak, each cell in the stack takes 4 bytes. At ebp+4, which is at an offset of 4 bytes from the base pointer, the return address for the call instruction lies in it. If you ascend 4 more bytes, ebp+8, now here are the storages for parameters. ebp+8 is for the first parameter, 'a', and ebp+12 is for the second parameter, 'b'. The mov instruction was trying to copy the value of the first parameter to the eax.
+The cell depicted in the stack are 32-bit wide memory locations. So to speak, each cell in the stack takes 4 bytes. At EBP+4, which is at an offset of 4 bytes from the base pointer, the return address for the call instruction lies in it. If you ascend 4 more bytes, EBP+8, now here are the storages for parameters. EBP+8 is for the first parameter, 'a', and EBP+12 is for the second parameter, 'b'. The mov instruction was trying to copy the value of the first parameter to the EAX.
 
-We should take the second parameter and perform a subtraction with only one instruction. Let's directly subtract it from eax.
+We should take the second parameter and perform a subtraction with only one instruction. Let's directly subtract it from EAX.
 
 	sub eax, DWORD PTR [ebp+12]
 
@@ -96,13 +96,13 @@ This seems to be quite easy if we apply what we have learned on the previous sub
 	pop ebp
 	ret
 	
-The assembler codes is trying to say that this subroutine copies the first parameter to the eax, and does something while following the callee rules.
+The assembler codes is trying to say that this subroutine copies the first parameter to the EAX, and does something while following the callee rules.
 
-Okay, we know the answer would multiply eax by three. However, the problem gives us to solve it with **lea**, not mul. How about this answer?
+Okay, we know the answer would multiply EAX by three. However, the problem gives us to solve it with **lea**, not mul. How about this answer?
 
 	lea eax, [eax*2 + eax]
 
-This type of addressing is called **Scaled Addressing Mode**, which can dynamically scale the value in the index register. It uses bit shifting so scaling of power of 2 (2, 4, or 8) is allowed. That's why the answer instruction is multiplying **'2'** and adding another eax to finally make it eax*3.
+This type of addressing is called **Scaled Addressing Mode**, which can dynamically scale the value in the index register. It uses bit shifting so scaling of power of 2 (2, 4, or 8) is allowed. That's why the answer instruction is multiplying **'2'** to EAX, and adding the EAX value once again to finally make it EAX*3.
 
 Although the scaled addressing is not special just for lea actually, (for example, mov can perform the similar thing such as *mov edx, \[esi+4\*ebx\]*) it is usually used for lea tricks, avoiding additional multiply instructions. Therefore it is good to remember the solution.
 
@@ -128,7 +128,7 @@ Gazing at numbers, negative and non-negative, 1 and 0, you might recall that neg
 
 	shr eax, 31
 	
-Let's shift eax right by 31 to isolate the sign bit!
+Let's shift EAX right by 31 to isolate the sign bit!
 
 ## 5. duck()
 	int duck(int a){
@@ -166,7 +166,7 @@ Look at this subroutine step by step.
 		________________
 		call sheep
 		
-While following the callee rules, it pushes ebx, and moves the parameter value to the ebx. If we want to pass it to sheep(), we should push it onto the stack before calling sheep(). If do so, it would be the parameter that is up the return address.
+While following the callee rules, it pushes EBX, and moves the parameter value to the EBX. If we want to pass it to sheep(), we should push it onto the stack before calling sheep(). If do so, it would be the parameter that is up the return address.
 
 		push ebx
 		
@@ -183,7 +183,7 @@ Next, let's see what happens after calling sheep().
 		pop ebp
 		ret
 		
-It says if the blank condition is satisfied, it skips two's complement negation of edx, move edx value to eax, and returns eax value as the final. What value should be compared? Since the callee sheep returns the value into eax, the answer should compare eax value with 0, so that the non-negative parameter can ignore the neg instruction.
+It says if the blank condition is satisfied, it skips two's complement negation of EDX, move EDX value to EAX, and returns EAX value as the final. What value should be compared? Since the callee sheep returns the value into EAX, the answer should compare EAX value with 0, so that the non-negative parameter can ignore the neg instruction.
 
 		cmp eax, 0
 		
