@@ -70,3 +70,24 @@ We should take the second parameter and perform a subtraction with only one inst
 	sub eax, DWORD PTR [ebp+12]
 
 ## 3. pig()
+	int pig(int a){ return a*3; }
+This seems to be quite easy if we apply what we have learned on the previous subroutine solutions...
+
+	push ebp
+	mov ebp, esp
+	mov eax, DWORD PTR [ebp+8]
+	lea ___________________
+	pop ebp
+	ret
+	
+The assembler codes is trying to say that this subroutine copies the first parameter to the eax, and does something while following the callee rules.
+
+Okay, we know the answer would multiply eax by three. However, the problem gives us to solve it with **lea**, not idiv. How about this answer?
+
+	lea eax, [eax*2 + eax]
+
+This type of addressing is called **Scaled Addressing Mode**, which can dynamically scale the value in the index register. It uses bit shifting so scaling of power of 2 (2, 4, or 8) is allowed. That's why the answer instruction is multiplying **'2'** and adding another eax to make it finally eax*3.
+
+Although the scaled addressing is not special just for lea actually, (for example, mov can perform the similar thing such as *mov edx, \[esi+4\*ebx\]*) it is usually used for lea tricks, avoiding additional multiply instructions. Therefore it is good to remember the solution.
+
+## 4. sheep()
