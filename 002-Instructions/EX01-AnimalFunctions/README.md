@@ -46,3 +46,27 @@ If you filled the blank, let's test the output on this simple C++ program.
     }
     
 ## 2. cow()
+	int cow(int a, int b){ return a - b; }
+
+The second function cow() gets two paramenters a and b, and it returns a - b.
+
+	push ebp
+	mov ebp, esp
+	mov eax, DWORD PTR [ebp+8]
+	__________________________
+	pop ebp
+	ret
+	
+And this is our assembly codes. Try to see line 3 and line 4 mainly, since the others are start and end of the callee rules.
+
+	mov eax, DWORD PTR [ebp+8]
+	
+What should we need to do if we want to pass some parameters to the subroutine? Push them onto the stack before the call. Since **the stack grows down**, the first parameter should be stored at the lowest address, and the addresses of next ones will be higher.
+
+The cell depicted in the stack are 32-bit wide memory locations. So to speak, each cell in the stack takes 4 bytes. At ebp+4, which is at an offset of 4 bytes from the base pointer, the return address for the call instruction lies in it. If you ascend 4 more bytes, ebp+8, now here are the storages for parameters. ebp+8 is for the first parameter, 'a', and ebp+12 is for the second parameter, 'b'. The mov instruction was trying to copy the value of the first parameter to the eax.
+
+We should take the second parameter and perform a subtraction with only one instruction. Let's directly subtract it from eax.
+
+	sub eax, DWORD PTR [ebp+12]
+
+## 3. pig()
