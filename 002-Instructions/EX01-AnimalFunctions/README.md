@@ -131,3 +131,59 @@ Gazing at numbers, negative and non-negative, 1 and 0, you might recall that neg
 Let's shift eax right by 31 to isolate the sign bit!
 
 ## 5. duck()
+	int duck(int a){
+		if(sheep(a))
+			return -a;
+		else
+			return a;
+	}
+
+The last function duck() is both the callee of main(), and the caller of sheep().
+
+		push ebp
+		mov ebp, esp
+		push ebx
+		mov ebx, [ebp+8]
+		________________
+		call sheep
+		mov edx, ebx
+		________________
+		je L6
+		neg edx
+	L6:
+		mov eax, edx
+		add esp, 4
+		pop ebx
+		pop ebp
+		ret
+		
+Look at this subroutine step by step.
+
+		push ebp
+		mov ebp, esp
+		push ebx
+		mov ebx, [ebp+8]
+		________________
+		call sheep
+		
+While following the callee rules, it pushes ebx, and moves the parameter value to the ebx. If we want to pass it to sheep(), we should push it onto the stack before calling sheep(). If do so, it would be the parameter that is up the return address.
+
+		push ebx
+		
+Next, let's see what happens after calling sheep().
+
+		mov edx, ebx
+		________________
+		je L6
+		neg edx
+	L6:
+		mov eax, edx
+		add esp, 4
+		pop ebx
+		pop ebp
+		ret
+		
+It says if the blank condition is satisfied, it skips two's complement negation of edx, move edx value to eax, and returns eax value as the final. What value should be compared? Since the callee sheep returns the value into eax, the answer should compare eax value with 0, so that the non-negative parameter can ignore the neg instruction.
+
+		cmp eax, 0
+		
