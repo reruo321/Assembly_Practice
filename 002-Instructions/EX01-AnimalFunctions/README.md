@@ -86,8 +86,32 @@ Okay, we know the answer would multiply eax by three. However, the problem gives
 
 	lea eax, [eax*2 + eax]
 
-This type of addressing is called **Scaled Addressing Mode**, which can dynamically scale the value in the index register. It uses bit shifting so scaling of power of 2 (2, 4, or 8) is allowed. That's why the answer instruction is multiplying **'2'** and adding another eax to make it finally eax*3.
+This type of addressing is called **Scaled Addressing Mode**, which can dynamically scale the value in the index register. It uses bit shifting so scaling of power of 2 (2, 4, or 8) is allowed. That's why the answer instruction is multiplying **'2'** and adding another eax to finally make it eax*3.
 
 Although the scaled addressing is not special just for lea actually, (for example, mov can perform the similar thing such as *mov edx, \[esi+4\*ebx\]*) it is usually used for lea tricks, avoiding additional multiply instructions. Therefore it is good to remember the solution.
 
 ## 4. sheep()
+	int sheep(int c){
+		if(c < 0)
+			return 1;
+		else
+			return 0;
+	}
+Let's move on to the fourth function. It wants to return 1 for the negative parameter, and 0 for the 0 or positive ones.
+
+	push ebp
+	mov ebp, esp
+	mov eax, [ebp+8]
+	________________
+	pop ebp
+	ret
+	
+Only one line for the answer! You might be expected to take some jconditions for the parameter and 0, and jump to the labels. However, to use this method it would need at least 2 lines, for the jcondition and for the jump. We may think another approach...
+
+Gazing at numbers, negative and non-negative, 1 and 0, you might recall that negative has the uppermost bit 1 and non-negative 0. If you manage to bring this information, the problem suddenly would become a piece of cake.
+
+	shr eax, 31
+	
+Let's shift eax right by 31 to isolate the sign bit!
+
+## 5. duck()
